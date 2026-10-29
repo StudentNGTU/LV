@@ -3,119 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Отрывок из Зверополиса</title>
+    <title>Video</title>
     <style>
-        /* Современный сброс стилей для iOS */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* Настройки для экрана iPhone 15 Pro (Dynamic Island и скругления) */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000000; /* Черный фон, чтобы видео сливалось с экраном */
-            color: #FFFFFF;
+            background: linear-gradient(135deg, #0a1930, #1e143a, #2a0040);
+            background-size: 200% 200%;
+            animation: bgShift 20s ease infinite;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 0;
-            /* Безопасные зоны для iPhone 15 Pro (учитывают Dynamic Island и скругленные углы) */
             padding-top: env(safe-area-inset-top);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
             padding-bottom: env(safe-area-inset-bottom);
+            position: relative;
+            overflow: hidden;
         }
 
-        .container {
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            padding: 25px;
             width: 100%;
-            display: flex;
-            justify-content: center;
+            max-width: 430px;
+            animation: fadeInUp 0.8s ease-out;
         }
 
-        /* Главный блок видео */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         video {
             width: 100%;
-            max-width: 430px; /* Максимальная ширина экрана iPhone 15 Pro */
             height: auto;
-            border-radius: 20px; /* Скругление углов видео, чтобы повторить дизайн iOS */
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            border-radius: 24px;
             background-color: #000;
             display: block;
+            box-shadow: 0 4px 15px rgba(0, 204, 255, 0.2);
         }
 
-        /* Текст-подсказка под видео */
-        .caption {
-            margin-top: 20px;
-            font-size: 16px;
-            line-height: 1.4;
-            text-align: center;
-            color: #E5E5EA;
-            padding: 0 20px;
-        }
-
-        /* Кнопка воспроизведения (на случай, если видео не заиграло само) */
         .play-btn {
-            margin-top: 30px;
-            padding: 12px 25px;
-            font-size: 18px;
+            margin-top: 25px;
+            padding: 15px 0;
+            font-size: 17px;
             font-weight: 600;
             color: #fff;
-            background-color: #007AFF; /* Классический синий цвет iOS */
+            background: linear-gradient(90deg, #00ccff, #6600ff);
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            box-shadow: 0 4px 15px rgba(102, 0, 255, 0.4);
         }
-        .play-btn:active {
+        .play-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 0, 255, 0.5);
+        }
+        .play-btn:active:not(:disabled) {
+            transform: translateY(0);
             opacity: 0.8;
+        }
+
+        .loader {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #00ccff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div>
-            <!-- 
-                ВАЖНО: 
-                1. Замените "clip.mp4" на точное имя вашего скачанного файла.
-                2. Атрибут autoplay включит видео сразу при открытии.
-                3. Атрибут playsinline обязателен для iPhone, иначе видео попытается открыться на весь экран.
-                4. muted обязателен для автовоспроизведения в мобильных браузерах.
-            -->
-            <video id="zootopiaClip" autoplay playsinline muted controls>
-                <source src="ZP2.mp4" type="video/mp4">
-            </video>
-            
-            <div class="caption">
-                Эпизод из мультфильма «Зверополис» (1:23:10)
-            </div>
+    <div class="glass-card">
+        <video id="zootopiaClip" playsinline muted controls>
+            <source src="clip.mp4" type="video/mp4">
+        </video>
 
-            <!-- Скрытая кнопка, которая появится, если браузер заблокирует автовоспроизведение -->
-            <button class="play-btn" id="playFallback" style="display: none;">
-                ▶️ Воспроизвести
-            </button>
-        </div>
+        <div class="loader" id="loader"></div>
+        
+        <button class="play-btn" id="playFallback" style="display: none;">Смотреть</button>
     </div>
 
     <script>
-        // iOS Safari очень строго относится к автовоспроизведению со звуком.
-        // Этот скрипт подстрахует нас: если видео не смогло запуститься само,
-        // он покажет пользователю понятную кнопку.
         const video = document.getElementById('zootopiaClip');
         const playBtn = document.getElementById('playFallback');
+        const loader = document.getElementById('loader');
 
-        // Проверяем, смогло ли видео запуститься автоматически через 1 секунду
+        video.addEventListener('waiting', () => {
+            loader.style.display = 'block';
+        });
+        video.addEventListener('canplay', () => {
+            loader.style.display = 'none';
+        });
+
         setTimeout(() => {
             if (video.paused) {
                 playBtn.style.display = 'block';
             }
-        }, 1000);
+        }, 1500);
 
         playBtn.addEventListener('click', function() {
-            // При нажатии убираем заглушку звука, чтобы был звук
             video.muted = false;
             video.play();
             playBtn.style.display = 'none';
