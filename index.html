@@ -64,29 +64,6 @@
             box-shadow: 0 4px 15px rgba(0, 204, 255, 0.2);
         }
 
-        .play-btn {
-            margin-top: 25px;
-            padding: 15px 0;
-            font-size: 17px;
-            font-weight: 600;
-            color: #fff;
-            background: linear-gradient(90deg, #00ccff, #6600ff);
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-            box-shadow: 0 4px 15px rgba(102, 0, 255, 0.4);
-        }
-        .play-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 0, 255, 0.5);
-        }
-        .play-btn:active:not(:disabled) {
-            transform: translateY(0);
-            opacity: 0.8;
-        }
-
         .loader {
             display: none;
             width: 40px;
@@ -107,37 +84,27 @@
 <body>
 
     <div class="glass-card">
-        <video id="zootopiaClip" playsinline muted controls>
-            <source src="clip.mp4" type="video/mp4">
+        <video id="zootopiaClip" playsinline muted autoplay controls>
+            <source src="ZP2.mp4" type="video/mp4">
         </video>
 
         <div class="loader" id="loader"></div>
-        
-        <button class="play-btn" id="playFallback" style="display: none;">Смотреть</button>
     </div>
 
     <script>
         const video = document.getElementById('zootopiaClip');
-        const playBtn = document.getElementById('playFallback');
         const loader = document.getElementById('loader');
 
+        /* Показываем индикатор загрузки, пока видео буферизуется */
         video.addEventListener('waiting', () => {
             loader.style.display = 'block';
         });
         video.addEventListener('canplay', () => {
             loader.style.display = 'none';
         });
-
-        setTimeout(() => {
-            if (video.paused) {
-                playBtn.style.display = 'block';
-            }
-        }, 1500);
-
-        playBtn.addEventListener('click', function() {
-            video.muted = false;
-            video.play();
-            playBtn.style.display = 'none';
+        video.addEventListener('error', () => {
+            loader.style.display = 'none';
+            alert('Ошибка загрузки видео. Проверьте, что файл clip.mp4 лежит в той же папке.');
         });
     </script>
 
