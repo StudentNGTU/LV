@@ -84,8 +84,9 @@
 <body>
 
     <div class="glass-card">
-        <video id="zootopiaClip" playsinline muted autoplay controls>
+        <video id="zootopiaClip" playsinline autoplay controls preload="auto">
             <source src="ZP2.mp4" type="video/mp4">
+            Ваш браузер не поддерживает тег video.
         </video>
 
         <div class="loader" id="loader"></div>
@@ -95,7 +96,6 @@
         const video = document.getElementById('zootopiaClip');
         const loader = document.getElementById('loader');
 
-        /* Показываем индикатор загрузки, пока видео буферизуется */
         video.addEventListener('waiting', () => {
             loader.style.display = 'block';
         });
@@ -104,7 +104,11 @@
         });
         video.addEventListener('error', () => {
             loader.style.display = 'none';
-            alert('Ошибка загрузки видео. Проверьте, что файл clip.mp4 лежит в той же папке.');
+            alert('Ошибка загрузки видео. Проверьте, что файл ZP2.mp4 лежит в той же папке.');
+        });
+
+        video.play().catch(error => {
+            console.log('Автовоспроизведение заблокировано браузером:', error.message);
         });
     </script>
 
